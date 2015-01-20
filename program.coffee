@@ -8,6 +8,7 @@ fs.readdir process.argv[2], (err,files) -> (console.log file if (path.extname(fi
 ###
 
 ###Excercise 6: Make It Modular###
+###
 
 mymodule = require('./mymodule')
 dir = process.argv[2]
@@ -22,6 +23,19 @@ mymodule(dir, extension, (err,files) ->
 	)
 
 
+###
+
+###Excercise 7: HTTP client###
+
+http = require('http')
+url = process.argv[2]
+
+http.get(url, (response)->
+		response.setEncoding('utf8')
+		response.on('data', console.log)
+		response.on('error', console.error)
+		true
+	)
 
 
 

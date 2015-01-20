@@ -13,26 +13,37 @@ fs.readdir process.argv[2], (err,files) -> (console.log file if (path.extname(fi
 
 /*Excercise 6: Make It Modular */
 
+
+/*
+
+mymodule = require('./mymodule')
+dir = process.argv[2]
+extension = process.argv[3]
+
+mymodule(dir, extension, (err,files) -> 
+
+		console.error("error", err) if err
+
+		console.log(file) for file in files
+
+	)
+ */
+
+
+/*Excercise 7: HTTP client */
+
 (function() {
-  var dir, extension, mymodule;
+  var http, url;
 
-  mymodule = require('./mymodule');
+  http = require('http');
 
-  dir = process.argv[2];
+  url = process.argv[2];
 
-  extension = process.argv[3];
-
-  mymodule(dir, extension, function(err, files) {
-    var file, _i, _len, _results;
-    if (err) {
-      console.error("error", err);
-    }
-    _results = [];
-    for (_i = 0, _len = files.length; _i < _len; _i++) {
-      file = files[_i];
-      _results.push(console.log(file));
-    }
-    return _results;
+  http.get(url, function(response) {
+    response.setEncoding('utf8');
+    response.on('data', console.log);
+    response.on('error', console.error);
+    return true;
   });
 
 }).call(this);
