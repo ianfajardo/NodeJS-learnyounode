@@ -26,7 +26,7 @@ mymodule(dir, extension, (err,files) ->
 ###
 
 ###Excercise 7: HTTP client###
-
+###
 http = require('http')
 url = process.argv[2]
 
@@ -36,6 +36,23 @@ http.get(url, (response)->
 		response.on('error', console.error)
 		true
 	)
+###
 
+###Excercise 8: HTTP Collect###
+###
+http = require('http')
+bl = require('bl')
 
+url = process.argv[2]
+
+http.get url, (response)->
+	response.pipe( bl((err,data)-> 
+			console.error(err) if err
+			data = data.toString()
+			console.log data.length 
+			console.log data 
+		))
+###
+
+##
 

@@ -32,18 +32,40 @@ mymodule(dir, extension, (err,files) ->
 
 /*Excercise 7: HTTP client */
 
+
+/*
+http = require('http')
+url = process.argv[2]
+
+http.get(url, (response)->
+		response.setEncoding('utf8')
+		response.on('data', console.log)
+		response.on('error', console.error)
+		true
+	)
+ */
+
+
+/*Excercise 8: HTTP Collect */
+
 (function() {
-  var http, url;
+  var bl, http, url;
 
   http = require('http');
+
+  bl = require('bl');
 
   url = process.argv[2];
 
   http.get(url, function(response) {
-    response.setEncoding('utf8');
-    response.on('data', console.log);
-    response.on('error', console.error);
-    return true;
+    return response.pipe(bl(function(err, data) {
+      if (err) {
+        console.error(err);
+      }
+      data = data.toString();
+      console.log(data.length);
+      return console.log(data);
+    }));
   });
 
 }).call(this);
