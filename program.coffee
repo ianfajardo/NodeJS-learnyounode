@@ -54,5 +54,22 @@ http.get url, (response)->
 		))
 ###
 
-##
+### Excercise 9: HTTP Multiple ASYNC###
+http = require('http')
+bl = require('bl')
+arr = new Array((process.argv.length)-2)
 
+count = 0
+
+httpGet = (index) ->( http.get process.argv[index+2], (response) ->
+
+	response.pipe bl ((err,data) ->
+			console.error(err) if err
+			arr[index] = data.toString()
+			count++
+			(console.log(arr[_i]) for url_data in arr) if count == arr.length
+		)
+	
+	true)
+
+httpGet _i for index in arr

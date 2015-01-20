@@ -48,24 +48,68 @@ http.get(url, (response)->
 
 /*Excercise 8: HTTP Collect */
 
+
+/*
+http = require('http')
+bl = require('bl')
+
+url = process.argv[2]
+
+http.get url, (response)->
+	response.pipe( bl((err,data)-> 
+			console.error(err) if err
+			data = data.toString()
+			console.log data.length 
+			console.log data 
+		))
+ */
+
+
+/* HTTP Multiple ASYNC */
+
 (function() {
-  var bl, http, url;
+  var arr, bl, count, http, httpGet, index, _i, _len;
 
   http = require('http');
 
   bl = require('bl');
 
-  url = process.argv[2];
+  arr = new Array(process.argv.length - 2);
 
-  http.get(url, function(response) {
-    return response.pipe(bl(function(err, data) {
-      if (err) {
-        console.error(err);
-      }
-      data = data.toString();
-      console.log(data.length);
-      return console.log(data);
-    }));
-  });
+  count = 0;
+
+
+  /* 
+  put output of response into corresponding array position
+  once the last value is put into the array, log contents to the console
+  use process.argv.length and count down from that value or to that value
+   */
+
+  httpGet = function(index) {
+    return http.get(process.argv[index + 2], function(response) {
+      response.pipe(bl((function(err, data) {
+        var url_data, _i, _len, _results;
+        if (err) {
+          console.error(err);
+        }
+        arr[index] = data.toString();
+        count++;
+        if (count === arr.length) {
+          _results = [];
+          for (_i = 0, _len = arr.length; _i < _len; _i++) {
+            url_data = arr[_i];
+            _results.push(console.log(arr[_i]));
+          }
+          return _results;
+        }
+      })));
+      return true;
+    });
+  };
+
+  for (_i = 0, _len = arr.length; _i < _len; _i++) {
+    index = arr[_i];
+    httpGet(_i);
+  }
 
 }).call(this);
