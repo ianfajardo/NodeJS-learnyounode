@@ -55,6 +55,8 @@ http.get url, (response)->
 ###
 
 ### Excercise 9: HTTP Multiple ASYNC###
+
+###
 http = require('http')
 bl = require('bl')
 arr = new Array((process.argv.length)-2)
@@ -73,3 +75,25 @@ httpGet = (index) ->( http.get process.argv[index+2], (response) ->
 	true)
 
 httpGet _i for index in arr
+###
+
+### Time Server ###
+
+net = require('net')
+port = process.argv[2]
+d = new Date()
+
+addZeroes = (d) -> 
+	if d < 10
+		return "0" + d
+	else 
+		return d
+
+date = d.getFullYear() + "-" + addZeroes(d.getMonth())  + "-" + addZeroes(d.getDay())  + " " + addZeroes d.getHours() + ":" + addZeroes d.getMinutes()
+
+server = net.createServer (socket) -> 
+	socket.write date
+	socket.end
+	true
+
+server.listen Number port

@@ -65,51 +65,58 @@ http.get url, (response)->
  */
 
 
-/* HTTP Multiple ASYNC */
+/* Excercise 9: HTTP Multiple ASYNC */
+
+
+/*
+http = require('http')
+bl = require('bl')
+arr = new Array((process.argv.length)-2)
+
+count = 0
+
+httpGet = (index) ->( http.get process.argv[index+2], (response) ->
+
+	response.pipe bl ((err,data) ->
+			console.error(err) if err
+			arr[index] = data.toString()
+			count++
+			(console.log(arr[_i]) for url_data in arr) if count == arr.length
+		)
+	
+	true)
+
+httpGet _i for index in arr
+ */
+
+
+/* Time Server */
 
 (function() {
-  var arr, bl, count, http, httpGet, index, _i, _len;
+  var addZeroes, d, date, net, port, server;
 
-  http = require('http');
+  net = require('net');
 
-  bl = require('bl');
+  port = process.argv[2];
 
-  arr = new Array(process.argv.length - 2);
+  d = new Date();
 
-  count = 0;
-
-
-  /* 
-  put output of response into corresponding array position
-  once the last value is put into the array, log contents to the console
-  use process.argv.length and count down from that value or to that value
-   */
-
-  httpGet = function(index) {
-    return http.get(process.argv[index + 2], function(response) {
-      response.pipe(bl((function(err, data) {
-        var url_data, _i, _len, _results;
-        if (err) {
-          console.error(err);
-        }
-        arr[index] = data.toString();
-        count++;
-        if (count === arr.length) {
-          _results = [];
-          for (_i = 0, _len = arr.length; _i < _len; _i++) {
-            url_data = arr[_i];
-            _results.push(console.log(arr[_i]));
-          }
-          return _results;
-        }
-      })));
-      return true;
-    });
+  addZeroes = function(d) {
+    if (d < 10) {
+      return "0" + d;
+    } else {
+      return d;
+    }
   };
 
-  for (_i = 0, _len = arr.length; _i < _len; _i++) {
-    index = arr[_i];
-    httpGet(_i);
-  }
+  date = d.getFullYear() + "-" + addZeroes(d.getMonth()) + "-" + addZeroes(d.getDay()) + " " + addZeroes(d.getHours() + ":" + addZeroes(d.getMinutes()));
+
+  server = net.createServer(function(socket) {
+    socket.write(date);
+    socket.end;
+    return true;
+  });
+
+  server.listen(Number(port));
 
 }).call(this);
