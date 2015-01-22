@@ -181,22 +181,72 @@ server.listen Number port
 
 /*Exercise 12: HTTP Uppercaser */
 
+
+/*
+http = require('http')
+map = require('through2-map')
+
+port = process.argv[2]
+
+server = http.createServer (req,res) ->
+
+	if req.method == 'POST' 
+		req.pipe(map((chunk)->
+			return chunk.toString().toUpperCase()
+			)).pipe res
+	else
+		res.end('not a POST')
+
+	
+
+server.listen Number port
+ */
+
+
+/*Exercise 13: HTTP JSON API Server */
+
 (function() {
-  var http, map, port, server;
+  var getTime, getUnixTime, http, port, server, url;
 
   http = require('http');
 
-  map = require('through2-map');
+  url = require('url');
+
+  getTime = function(time) {
+    var obj;
+    return obj = {
+      hour: time.getHours(),
+      minute: time.getMinutes(),
+      second: time.getSeconds()
+    };
+  };
+
+  getUnixTime = function(time) {
+    var obj;
+    return obj = {
+      unixtime: time.getTime()
+    };
+  };
 
   port = process.argv[2];
 
   server = http.createServer(function(req, res) {
-    if (req.method === 'POST') {
-      return req.pipe(map(function(chunk) {
-        return chunk.toString().toUpperCase();
-      })).pipe(res);
+    var parsedURL, result, time;
+    parsedURL = url.parse(req.url, true);
+    time = new Date(parsedURL.query.iso);
+    if (/^\/api\/parsetime/.test(req.url)) {
+      result = getTime(time);
+    } else if (/^\/api\/unixtime/.test(req.url)) {
+      result = getUnixTime(time);
+    }
+    if (result) {
+      res.writeHead(200, {
+        'Content-Type': 'application/json'
+      });
+      return res.end(JSON.stringify(result));
     } else {
-      return res.end('not a POST');
+      res.writehead(404);
+      return res.end();
     }
   });
 

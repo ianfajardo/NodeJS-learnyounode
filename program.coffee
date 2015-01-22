@@ -153,6 +153,7 @@ server.listen Number port
 ###
 
 ###Exercise 12: HTTP Uppercaser###
+###
 http = require('http')
 map = require('through2-map')
 
@@ -170,8 +171,40 @@ server = http.createServer (req,res) ->
 	
 
 server.listen Number port
+###
+
+###Exercise 13: HTTP JSON API Server###
+http = require('http')
+url = require('url')
+
+getTime = (time) -> 
+	obj = 
+		hour: time.getHours()
+		minute: time.getMinutes()
+		second: time.getSeconds()
+
+getUnixTime = (time) ->
+	obj =
+		unixtime: time.getTime()
+
+port = process.argv[2]
+
+server = http.createServer (req, res) ->
+	parsedURL = url.parse(req.url, true)
+	time = new Date parsedURL.query.iso
+
+	if /^\/api\/parsetime/.test(req.url)
+			result = getTime(time) 
+	else if /^\/api\/unixtime/.test(req.url)
+		result = getUnixTime(time)
+
+	if result
+		res.writeHead 200, { 'Content-Type': 'application/json'}
+		res.end(JSON.stringify result)
+	else
+		res.writehead 404
+		res.end()
 
 
-
-
+server.listen Number port
 
