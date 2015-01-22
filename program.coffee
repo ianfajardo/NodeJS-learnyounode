@@ -1,4 +1,39 @@
-###xcercise 5: Filtered LS###
+###Exercise 2: Parsing command line variables###
+###
+var args = process.argv;
+var sum = 0;
+
+for (var i = 2; i < args.length; i++){
+  sum += Number(args[i]);
+}
+console.log(sum);
+###
+
+###Exercise 3; My First I/O ###
+###
+var args = process.argv;
+var filename = args[2];
+
+var fs = require('fs');
+
+var buf = fs.readFileSync(filename);
+var str = buf.toString();
+//or var str = fs.readFileSync(process.argv[2], 'utf8');
+
+var arr = str.split('\n');
+console.log(arr.length-1);
+###
+
+###Exercise 4: My First Async I/O###
+###
+var fs = require('fs');
+
+fs.readFile(process.argv[2], 'utf8', function(err, fileContents){
+  console.log((fileContents.split('\n')).length-1);
+});
+###
+
+###Excercise 5: Filtered LS###
 
 ###
 fs = require('fs')
@@ -77,11 +112,12 @@ httpGet = (index) ->( http.get process.argv[index+2], (response) ->
 httpGet _i for index in arr
 ###
 
-### Time Server ###
+### Exercise 10: Time Server ###
 
+###
 net = require('net')
 port = process.argv[2]
-d = new Date()
+d = new Date
 
 addZeroes = (d) -> 
 	if d < 10
@@ -89,11 +125,53 @@ addZeroes = (d) ->
 	else 
 		return d
 
-date = d.getFullYear() + "-" + addZeroes(d.getMonth())  + "-" + addZeroes(d.getDay())  + " " + addZeroes d.getHours() + ":" + addZeroes d.getMinutes()
+date = d.getFullYear() + "-" + addZeroes(d.getMonth() + 1)  + "-" + addZeroes(d.getUTCDate())  + " " + addZeroes d.getHours() + ":" + addZeroes d.getMinutes()
 
 server = net.createServer (socket) -> 
-	socket.write date
-	socket.end
+	socket.write date + "\n"
+	socket.end()
 	true
+	
+server.listen Number port
+###
+
+###Exercise 11: HTTP File Server###
+###
+fs = require('fs')
+http = require('http')
+
+port = process.argv[2]
+file = process.argv[3]
+
+server = http.createServer (req, res) ->
+	res.writeHead 200, { 'content-type': 'text/plain' }
+
+	(fs.createReadStream file).pipe res
+
 
 server.listen Number port
+###
+
+###Exercise 12: HTTP Uppercaser###
+http = require('http')
+map = require('through2-map')
+
+port = process.argv[2]
+
+server = http.createServer (req,res) ->
+
+	if req.method == 'POST' 
+		req.pipe(map((chunk)->
+			return chunk.toString().toUpperCase()
+			)).pipe res
+	else
+		res.end('not a POST')
+
+	
+
+server.listen Number port
+
+
+
+
+
